@@ -1,0 +1,66 @@
+---
+#- name: Create nginx conf file 
+#  file:
+#    path: /etc/nginx/conf
+#    state: directory
+#    mode: '0755'
+#
+#- name: Copy nginx config 
+#  copy:
+#    src: nginx.conf
+#    dest: /etc/nginx/conf/nginx.conf
+#
+#- name: Create nginx container 
+#  docker_container:
+#    name: Nginx
+#    image: nginx
+#    ports:
+#      - 1000:8081
+#      - 443:443
+#    exposed_ports:
+#      - 8080
+#      - 443
+#    volumes:
+#      - /etc/nginx/conf/:/etc/nginx/conf/
+#    state: 'started'
+#    restart_policy: 'always'
+
+- name: Add repository
+  yum_repository:
+    name: nginx
+    description: Nginx Repo 
+    file: nginx
+    baseurl: http://nginx.org/packages/centos/$releasever/$basearch/ 
+    gpgcheck: no
+
+- name: Install nginx 
+  yum:
+    name:
+      - nginx
+    state: present
+
+- name: Install firewalld 
+  yum:
+    name:
+      - firewalld 
+    state: present
+
+- name: Start firewalld service 
+  service:
+    name: firewalld 
+    state: started
+    enabled: yes
+
+- firewalld:
+    service: "{{ item }}" 
+    permanent: yes
+    state: enabled
+  with_items:
+     - https
+     - http
+
+- name: Restart firewalld 
+  service:
+    name: firewalld 
+    state: restarted 
+    enabled: yes

@@ -1,0 +1,4 @@
+---
+- hosts: rancher-nginx 
+  roles:
+     - nginx

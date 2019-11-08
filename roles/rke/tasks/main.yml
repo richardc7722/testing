@@ -1,0 +1,8 @@
+---
+# tasks file for rke
+- name: Install kubectl
+  import_tasks: install-kubectl.yml
+
+- name: Install rke
+  import_tasks: install-rke.yml
+

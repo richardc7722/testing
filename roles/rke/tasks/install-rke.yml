@@ -1,0 +1,7 @@
+---
+- name: Grab RKE package
+  uri:
+    url: https://github.com/rancher/rke/releases/download/v0.3.2/rke_linux-amd64 
+    dest: /usr/bin/rke
+    status_code: 200, 304
+    mode: 755 

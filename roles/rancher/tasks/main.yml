@@ -1,0 +1,16 @@
+---
+# tasks file for rancher
+- name: Install Docker-CE
+  import_tasks: install-docker.yml
+
+#- name: Install kubectl
+#  import_tasks: install-kubectl.yml
+#
+#- name: Install rke
+#  import_tasks: install-rke.yml
+#
+#- name: Install helm
+#  import_tasks: install-helm.yml
+
+#- name: Install nginx 
+#  import_tasks: install-nginx.yml

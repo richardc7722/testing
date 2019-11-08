@@ -1,0 +1,44 @@
+---
+- name: Check that you can connect (GET) to a page and it returns a status 200
+  uri:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docker-ce.repo
+    status_code: 200, 304
+  register: response
+  ignore_errors: yes
+
+#- name: Add Docker-CE repository
+#  yum_repository:
+#    name: docker-ce-stable
+#    description: Docker-Community-Edition 
+#    baseurl: https://download.docker.com/linux/centos/docker-ce.repo
+#  when: response.status == 200
+
+#Might not work when using RH repos
+- name: Install Docker-CE
+  yum:
+    name:
+      - yum-utils
+      - device-mapper-persistent-data
+      - lvm2
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - python-pip
+    state: present
+#  when: response.status == 200 or response.status == 304
+
+- name: Add centos to docker 
+  user:
+    name: centos 
+    comment: Add centos to docker 
+    group: docker 
+
+- name: Start Docker service 
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- pip:
+    name: docker-py

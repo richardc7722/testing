@@ -1,0 +1,13 @@
+- name: Grab helm tar 
+  unarchive:
+    src: https://get.helm.sh/helm-v2.14.3-linux-amd64.tar.gz
+    dest: /tmp
+    remote_src: yes
+
+- name: Stat helm
+  stat: path=/tmp/linux-amd64/helm
+  register: helm_stat
+
+- name: Move helm to bin
+  command: mv /tmp/linux-amd64/helm /usr/bin/helm
+  when: helm_stat.stat.exists
