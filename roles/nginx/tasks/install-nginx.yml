@@ -58,9 +58,10 @@
   with_items:
      - https
      - http
+  notify: restart firewalld
 
-- name: Restart firewalld 
+- name: Start nginx 
   service:
-    name: firewalld 
-    state: restarted 
+    name: nginx 
+    state: started 
     enabled: yes

@@ -6,3 +6,5 @@
 - name: Install rke
   import_tasks: install-rke.yml
 
+- name: run rke
+  import_tasks: run-rke.yml 

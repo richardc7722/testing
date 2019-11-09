@@ -1,0 +1,38 @@
+---
+- name: Template for rke 
+  template:
+    src: templates/cluster.yml
+    dest: /home/centos/cluster.yml
+    owner: centos 
+    group: centos 
+    mode: '0755'
+
+- name: run rke 
+  shell: /usr/bin/rke up --config /home/centos/cluster.yml 
+  become_user: centos
+
+- name: Run kubclt to set up teller 
+  shell: export KUBECONFIG=/home/centos/kube_config_cluster.yml && /usr/bin/kubectl -n kube-system create serviceaccount tiller 
+  register: out
+  failed_when: "'did you specify the right host or port' in out.stderr"
+
+- name: Create cluster role 
+  shell: export KUBECONFIG=/home/centos/kube_config_cluster.yml && /usr/bin/kubectl create clusterrolebinding tiller --clusterrole=cluster-admin --serviceaccount=kube-system:tiller 
+  ignore_errors: true
+
+- name: Create account for tiller 
+  shell: export KUBECONFIG=/home/centos/kube_config_cluster.yml && /usr/bin/helm init --service-account tiller 
+  ignore_errors: true
+
+- name: Add helm chart repo 
+  shell: export KUBECONFIG=/home/centos/kube_config_cluster.yml && /usr/bin/helm repo add rancher-latest https://releases.rancher.com/server-charts/latest 
+
+#Find a way to determine if tiller node is ready
+- pause:
+    minutes: 5
+
+- name: Configure helm to use ssl 
+  shell: export KUBECONFIG=/home/centos/kube_config_cluster.yml && /usr/bin/helm install rancher-latest/rancher --name rancher --namespace cattle-system --set hostname=rancher.coyote.internal --set ingress.tls.source=secret 
+
+- name: Run kubclt to set up teller 
+  shell: export KUBECONFIG=/home/centos/kube_config_cluster.yml && /usr/bin/kubectl -n cattle-system create secret tls tls-rancher-ingress --cert=/home/centos/rancher.crt --key=/home/centos/rancher.key

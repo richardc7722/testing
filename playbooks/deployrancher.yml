@@ -1,0 +1,8 @@
+---
+- name: Deploy nginx 
+  import_playbook: nginx.yml
+- name: Deploy rancher nodes 
+  import_playbook: ranchernodes.yml
+- name: Deploy rke 
+  import_playbook: rke.yml
+
